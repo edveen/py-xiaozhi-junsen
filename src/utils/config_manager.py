@@ -36,8 +36,8 @@ class ConfigManager:
         "MQTT_INFO": None,
         "USE_WAKE_WORD": False,
         "WAKE_WORDS": [
-            "小智",
-            "你好小明"
+            "湾湾",
+            "你好湾湾"
         ],
         "WAKE_WORD_MODEL_PATH": "./models/vosk-model-small-cn-0.22"
     }

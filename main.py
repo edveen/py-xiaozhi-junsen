@@ -9,7 +9,7 @@ logger = logging.getLogger("Main")
 
 def parse_args():
     """解析命令行参数"""
-    parser = argparse.ArgumentParser(description='小智ai客户端')
+    parser = argparse.ArgumentParser(description='智能对话')
     
     # 添加界面模式参数
     parser.add_argument(

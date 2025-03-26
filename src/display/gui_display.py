@@ -19,7 +19,7 @@ class GuiDisplay(BaseDisplay):
 
         # 创建主窗口
         self.root = tk.Tk()
-        self.root.title("小智Ai语音控制")
+        self.root.title("Ai语音控制")
         self.root.geometry("300x300")
 
         # 状态显示
@@ -270,6 +270,10 @@ class GuiDisplay(BaseDisplay):
             self.start_keyboard_listener()
             # 启动更新线程
             self.start_update_threads()
+            # 拟点击切换为自动模式
+            self._on_mode_button_click()
+            # 模拟点击开始按钮
+            #self._on_auto_button_click()
             # 在主线程中运行主循环
             self.logger.info("开始启动GUI主循环")
             self.root.mainloop()

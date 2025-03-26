@@ -142,7 +142,7 @@ class CliDisplay(BaseDisplay):
 
     def _print_help(self):
         """打印帮助信息"""
-        print("\n=== 小智Ai命令行控制 ===")
+        print("\n=== Ai命令行控制 ===")
         print("可用命令：")
         print("  r     - 开始/停止对话")
         print("  x     - 打断当前对话")
