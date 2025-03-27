@@ -12,6 +12,8 @@ class Protocol:
         self.on_audio_channel_opened = None
         self.on_audio_channel_closed = None
         self.on_network_error = None
+        # 添加音频配置变更回调
+        self.on_audio_config_changed = None
 
     def on_incoming_json(self, callback):
         """设置JSON消息接收回调函数"""
@@ -86,7 +88,7 @@ class Protocol:
         message = {
             "session_id": self.session_id,
             "type": "iot",
-            "descriptors": json.loads(descriptors)  # 确保descriptors是有效的JSON
+            "descriptors": json.loads(descriptors) if isinstance(descriptors, str) else descriptors
         }
         await self.send_text(json.dumps(message))
 
@@ -95,6 +97,6 @@ class Protocol:
         message = {
             "session_id": self.session_id,
             "type": "iot",
-            "states": json.loads(states)  # 确保states是有效的JSON
+            "states": json.loads(states) if isinstance(states, str) else states
         }
         await self.send_text(json.dumps(message))

@@ -3,7 +3,7 @@ import json
 import logging
 import websockets
 
-
+from src.constants.constants import AudioConfig
 from src.protocols.protocol import Protocol
 from src.utils.config_manager import ConfigManager
 
@@ -17,7 +17,6 @@ class WebsocketProtocol(Protocol):
         # 获取配置管理器实例
         self.config = ConfigManager.get_instance()
         self.websocket = None
-        self.server_sample_rate = 16000
         self.connected = False
         self.hello_received = None  # 初始化时先设为 None
         self.WEBSOCKET_URL = self.config.get_config("NETWORK.WEBSOCKET_URL")
@@ -63,9 +62,9 @@ class WebsocketProtocol(Protocol):
                 "transport": "websocket",
                 "audio_params": {
                     "format": "opus",
-                    "sample_rate": 16000,
-                    "channels": 1,
-                    "frame_duration": 60
+                    "sample_rate": AudioConfig.INPUT_SAMPLE_RATE,
+                    "channels": AudioConfig.CHANNELS,
+                    "frame_duration": AudioConfig.FRAME_DURATION,
                 }
             }
             await self.send_text(json.dumps(hello_message))
@@ -131,9 +130,8 @@ class WebsocketProtocol(Protocol):
         try:
             await self.websocket.send(data)
         except Exception as e:
-            logger.error(f"发送音频数据失败: {e}")
             if self.on_network_error:
-                self.on_network_error(f"发送音频失败: {str(e)}")
+                self.on_network_error()
 
     async def send_text(self, message: str):
         """发送文本消息"""
@@ -161,34 +159,14 @@ class WebsocketProtocol(Protocol):
         return True
 
     async def _handle_server_hello(self, data: dict):
-        """处理服务器的 hello 消息
-        
-        解析服务器返回的 hello 消息，设置相关参数并通知音频通道已打开
-        
-        Args:
-            data: 服务器返回的 hello 消息数据
-        """
+        """处理服务器的 hello 消息"""
         try:
             # 验证传输方式
             transport = data.get("transport")
             if not transport or transport != "websocket":
                 logger.error(f"不支持的传输方式: {transport}")
                 return
-
-            # 获取音频参数
-            audio_params = data.get("audio_params")
-            if audio_params:
-                # 获取服务器的采样率
-                sample_rate = audio_params.get("sample_rate")
-                if sample_rate:
-                    self.server_sample_rate = sample_rate
-                    # 如果服务器采样率与本地不同，记录警告
-                    if sample_rate != self.server_sample_rate:
-                        logger.warning(
-                            f"服务器的音频采样率 {sample_rate} "
-                            f"与设备输出的采样率 {self.server_sample_rate} 不一致，"
-                            "重采样后可能会失真"
-                        )
+            print("服务链接返回初始化配置", data)
 
             # 设置 hello 接收事件
             self.hello_received.set()
